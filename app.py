@@ -1,5 +1,7 @@
 from flask import Flask, jsonify
+from flask import request, Response
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 books = [
     {
@@ -17,28 +19,26 @@ books = [
 @app.route('/books')
 def get_books():
     return jsonify({'books': books})
-''' POST /books
-{
-    "name': 'book3',
-    'price': 85,
-    'isbn': 45578764
-
-}
-'''
+# POST
 def validBookObject(bookObject):
-    if "name" in bookObject and "price" in  bookObject and "isbn" in bookObject:
+    if ("name" in bookObject and "price" in  bookObject and "isbn" in bookObject):
         return True
     else:
         return False
 
-
 @app.route('/books', methods=['POST'])
 def add_book():
-    req = request.get_json()
+    request_data = request.get_json()
 
-    if(validBookObject(req)):
-        books.index(0, req)
-        return "True"
+    if(validBookObject(request_data)):
+        new_books = {
+            "name": request_data['name'],
+            "price": request_data['price'],
+            "isbn": request_data['isbn']
+        }
+        books.insert(0, new_books)
+        response= Response("", 201, mimetype='application/json')
+        return response
     else:
         return "False"
 
