@@ -17,6 +17,31 @@ books = [
 @app.route('/books')
 def get_books():
     return jsonify({'books': books})
+''' POST /books
+{
+    "name': 'book3',
+    'price': 85,
+    'isbn': 45578764
+
+}
+'''
+def validBookObject(bookObject):
+    if "name" in bookObject and "price" in  bookObject and "isbn" in bookObject:
+        return True
+    else:
+        return False
+
+
+@app.route('/books', methods=['POST'])
+def add_book():
+    req = request.get_json()
+
+    if(validBookObject(req)):
+        books.index(0, req)
+        return "True"
+    else:
+        return "False"
+
 
 # GET /books/96857422
 @app.route('/books/<int:isbn>')
