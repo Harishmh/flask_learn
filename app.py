@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
 from flask import request, Response
+import json
 app = Flask(__name__)
-app.config['DEBUG'] = True
+#app.config['DEBUG'] = True
 
 books = [
     {
@@ -38,9 +39,15 @@ def add_book():
         }
         books.insert(0, new_books)
         response= Response("", 201, mimetype='application/json')
+        response.headers['Location']= "/books/" + str(new_books['isbn'])
         return response
     else:
-        return "False"
+        invalifBookObkectErroMsg = {
+            "error": "Invlaid book object passed in request",
+            "helpstring": "Data passed in similar to this{'name': 'bookname', 'price': 450, 'isbn': 89465465}"
+        }
+        response = Response(json.dumps(invalifBookObkectErroMsg), status=400, mimetype='applicatio/json');
+        return response
 
 
 # GET /books/96857422
